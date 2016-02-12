@@ -101,4 +101,67 @@ function my_login_redirect( $redirect_to, $request, $user ) {
 }
 add_action( 'login_redirect', 'my_login_redirect', 10, 3 );
 
+
+/**
+ * Add a custom class to the body of the WP Login page.
+ * 
+ * @param  array  $classes
+ * @return array
+ */
+function login_body_classes( $classes = array() ) {
+    
+	$classes[] = 'my-custom-body-class';
+	return $classes;
+}
+add_filter( 'login_body_class', 'login_body_classes' );
+
+
+/**
+ * Add custom css to the WP Login page.
+ *
+ */
+function login_enqueue_scripts() {
+	?>
+	<style>
+		body {
+			background-color: #4791cc !important;
+		}
+		.login h1 a {
+            background-image: url(<?php echo plugin_dir_url( __FILE__ ); ?>images/my-custom-logo.png);
+            background-size: auto;
+            width: 236px;
+            height: 75px;
+        }
+        .login #nav,
+        .login #backtoblog {
+        	background: #2d2d2d none repeat scroll 0 0;
+		    color: #fff;
+		    font-size: 15px;
+        }
+
+        .login #nav {
+		    box-shadow: 0 10px 15px -7px rgba(0, 0, 0, 0.75) inset;
+		    margin: 0;
+		    padding-top: 24px;
+		}
+
+		.login #backtoblog {
+		    margin: 0;
+		    padding: 16px 24px !important;
+		}
+
+        #nav a,
+        #backtoblog a {
+        	color: #FFF !important;
+        }
+
+        .my-custom-body-class #nav,
+        .my-custom-body-class #backtoblog {
+        	display: none !important;
+        }
+	</style>
+	<?php
+}
+add_action( 'login_enqueue_scripts', 'login_enqueue_scripts' );
+
 ?>

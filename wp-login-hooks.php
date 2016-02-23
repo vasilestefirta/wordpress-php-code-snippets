@@ -164,4 +164,45 @@ function login_enqueue_scripts() {
 }
 add_action( 'login_enqueue_scripts', 'login_enqueue_scripts' );
 
+/**
+ * Change the WP login flow, by making a request to a 3rd party system first and then login the user based on the API response.
+ * NOTE: In the example below, we'll ignore the main admin user.
+ * 
+ * @param null or WP_User or WP_Error $user
+ * @param string $username
+ * @param string $password
+ * 
+ * @return mixed
+ */
+function check_custom_login( $user, $username, $password ) {
+    $username_to_ignore = 'my_wp_admin';	
+	
+    if( $username == $username_to_ignore ) {
+        $user = get_user_by( 'login', $username );
+        
+        if( $user && wp_check_password( $password, $user->data->user_pass, $user->ID ) ) {
+            return $user;
+        }
+
+        return new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: Username or password is not correct.' ) );
+    }
+
+    // make a request to a 3rd party system if user provided all of the login credentials
+    if( ! empty( $username ) && ! empty( $password ) ) {
+        
+        // NOTE: "api_call()" is a dummy function used for demo purposes only
+        $response = api_call( 'https://api.service.net/v1/login', array( 'username' => $username, 'password' => $password ) );
+        
+        if( $response['success'] ) {
+            $user = get_user_by( 'login', $username );
+        }
+        else {
+            $user = new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: ' . trim( $r['message'], '.' ) . '.' ) );
+        }
+    }
+
+    return $user;
+}
+add_filter( 'authenticate', 'check_custom_login', 40, 3 );
+
 ?>

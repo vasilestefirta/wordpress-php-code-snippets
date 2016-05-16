@@ -85,8 +85,6 @@ add_action( 'login_init', 'add_wp_login_page_restrications' );
  */
 function my_login_redirect( $redirect_to, $request, $user ) {
 
-	global $user;
-	
 	if( isset( $user->roles ) && is_array( $user->roles ) ) {
 		// check for admins
 		if( in_array( 'administrator', $user->roles ) ) {

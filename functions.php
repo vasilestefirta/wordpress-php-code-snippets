@@ -1,3 +1,5 @@
+<?php
+
 function export_posts_as_csv() {
 
 	$args = array(
@@ -18,8 +20,8 @@ function export_posts_as_csv() {
     $i = 1;
     while( have_posts() ) : the_post();
         
-		fputcsv( $output, array( $i, get_the_ID(), get_the_title(), get_post_status() ) );
-		$i++;
+	fputcsv( $output, array( $i, get_the_ID(), get_the_title(), get_post_status() ) );
+	$i++;
 
     endwhile;
     wp_reset_query();
@@ -27,3 +29,5 @@ function export_posts_as_csv() {
     fclose( $output );
     die;
 }
+
+?>
